@@ -1,48 +1,67 @@
 
 import random as rd
 
-def estAdmissible(labyrinthe, i, j, connexe) :
+def estAdmissible(labyrinthe : list, i :int, j :int, connexe : int) -> list :
+	"""
+	
+
+	Paramètres :
+		labyrinthe : matrice du labyrinthe
+		i : ligne de la case testée (oligne réelle)
+		j : colonne de la case testée (colonne réelle)
+		connexe : numéro de la composante connexe à laquell appartient la case
+
+	Pour la case considérée, test si il y a des murs qui peuvent être cassés dans les quatre directions cardinales.
+	Renvoie une liste, éventuellement vide, de tuples de taille 3 sous la forme (x, y, connexe2)
+	x et y désigne les coordonnées matricielle (ligne, colonne) du mur admissible, connexe2 désigne le numéro de la composante connexe de l'autre côté dudit mur.
+	"""
 	mursAdmissibles = [] #Liste des murs qui peuvent être cassés
-	admissible = False
 	
 #Tester à gauche
 	
 	if j != 0 : #On regarde si on est au bord
 		if labyrinthe[i][j - 1] == -1 and labyrinthe[i][j - 2] != connexe :
-			admissible = True
 			mursAdmissibles.append((i, j - 1, labyrinthe[i][j - 2])) #On note les coordonnées du mur à casser et la composante connexe suivante
 	
 #Tester à droite
 	
 	if j != len(labyrinthe[0]) - 1 : #On regarde si on est au bord
 		if labyrinthe[i][j + 1] == -1 and labyrinthe[i][j + 2] != connexe :
-			admissible = True
 			mursAdmissibles.append((i, j + 1, labyrinthe[i][j + 2]))
 			
 #Tester en haut
 	
 	if i != 0 : #On regarde si on est au bord
 		if labyrinthe[i - 1][j] == -1 and labyrinthe[i - 2][j] != connexe :
-			admissible = True
 			mursAdmissibles.append((i -1, j, labyrinthe[i - 2][j]))
 	
 #Tester en bas
 	if i != len(labyrinthe) - 1 : #On regarde si on est au bord
 		if labyrinthe[i + 1][j] == -1 and labyrinthe[i + 2][j] != connexe :
-			admissible = True
 			mursAdmissibles.append((i + 1, j, labyrinthe[i + 2][j]))
 			
-	return admissible, mursAdmissibles
+	return mursAdmissibles
 
-def percerUnMur(labyrinthe : list, n : int, p : int) :
-	i = rd.randint(0, n -1) * 2 #ordonnée de la case choisie
-	j = rd.randint(0, p - 1) * 2 #abscisse de la case choisie
+def percerUnMur(labyrinthe : list, n : int, p : int) -> None :
+	"""
+	
+	Paramètres :
+		- labyrinthe : la matrice du labyrinthe dans lequel il faut ouvrir un mur
+		- n : nombres de lignes du labyrinthe (ne compte que les cases, pas le nombre réel de ligne de la matrice)
+		- p : nombre de colonnes du labyrinthe (ne compte que les cases, pas le nombre réel de colonnes)
+	
+	Procédure qui sélectionne aléatoirement deux cases mitoyennes et n'appartenant pas à la même composante connexe, retire le mur entre les deux et fusionne les composantes connexes.'
+
+	"""
+	i = rd.randint(0, n -1) * 2 #ligne de la case choisie
+	j = rd.randint(0, p - 1) * 2 #colonne de la case choisie
+	# Les mutliplications par deux assurent de ne pas tomber sur un mur mais bien sur une case
 	connexe = labyrinthe[i][j] #Numéro de la composante connexe de la case considérée
-	admissible = False #Booléen qui indique si un mur peut être cassé
+	mursAdmissibles = [] #Initialisation d'une liste
 	
 	#Recherche d'un mur à casser
-	while not admissible :
-		admissible, mursAdmissibles = estAdmissible(labyrinthe, i, j, connexe)
+	while len(mursAdmissibles) == 0 :
+		mursAdmissibles = estAdmissible(labyrinthe, i, j, connexe)
 		i = rd.randint(0, n -1) * 2
 		j = rd.randint(0, p - 1) * 2
 		
