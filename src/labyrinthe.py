@@ -48,13 +48,15 @@ def percerUnMur(labyrinthe : list, n : int, p : int) :
 		
 	mur = mursAdmissibles[rd.randint(0, len(mursAdmissibles) - 1)] #Sélection du mur à casser
 	
-	labyrinthe[mur[0]][mur[1]] = connexe
-	connexeFusion = mur[2] #Numéro de la composante connexe à absorber
+	connexe2 = mur[2]
+	connexeNouveau = min(connexe, connexe2)
+	connexeAncien = max(connexe, connexe2)
+	labyrinthe[mur[0]][mur[1]] = connexeNouveau
 	
 	for k in range(len(labyrinthe)) :
 		for l in range(len(labyrinthe[0])) :
-			if labyrinthe[k][l] == connexeFusion:
-				labyrinthe[k][l] = connexe
+			if labyrinthe[k][l] == connexeAncien:
+				labyrinthe[k][l] = connexeNouveau
 
 def genereCase(i: int, j: int, n: int, p: int) -> int:
 	# Intersection mur
@@ -96,7 +98,7 @@ def genereLabyrinthe(n: int, p: int) -> list[list[int]]:
 	return labyrinthe
 
 #lab = genereLabyrinthe(5, 5)
-lab= genereLabyrinthe(6, 6)
+lab= genereLabyrinthe(50, 50)
 for i in range(len(lab)):
 	line = ""
 	for j in range(len(lab[0])):
