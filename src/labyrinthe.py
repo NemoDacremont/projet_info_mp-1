@@ -1,10 +1,31 @@
 
 import random as rd
 
+def saveLabInFile(labyrinthe, n: int, p: int, fileName: str, mode = "a"):
+	text = ""
+	for i in range(n):
+		line = ""
+
+		for j in range(p):
+			n = labyrinthe[i][j]
+			if n < -9:
+				line += f"{labyrinthe[i][j]},"
+			elif n < -0:
+				line += f"{labyrinthe[i][j]},"
+			elif n < 10:
+				line += f" {labyrinthe[i][j]},"
+			else:
+				line += f"{labyrinthe[i][j]},"
+
+		text += f"{line}\n"
+
+	with open(fileName, "a") as file:
+		file.write(text)
+		file.write("----------------------------------------------\n")
+
+
 def estAdmissible(labyrinthe : list, i :int, j :int, connexe : int) -> list :
 	"""
-	
-
 	Paramètres :
 		labyrinthe : matrice du labyrinthe
 		i : ligne de la case testée (oligne réelle)
@@ -16,62 +37,59 @@ def estAdmissible(labyrinthe : list, i :int, j :int, connexe : int) -> list :
 	x et y désigne les coordonnées matricielle (ligne, colonne) du mur admissible, connexe2 désigne le numéro de la composante connexe de l'autre côté dudit mur.
 	"""
 	mursAdmissibles = [] #Liste des murs qui peuvent être cassés
-	
-#Tester à gauche
-	
+
+	#Tester à gauche
 	if j != 0 : #On regarde si on est au bord
 		if labyrinthe[i][j - 1] == -1 and labyrinthe[i][j - 2] != connexe :
 			mursAdmissibles.append((i, j - 1, labyrinthe[i][j - 2])) #On note les coordonnées du mur à casser et la composante connexe suivante
-	
-#Tester à droite
-	
+
+	#Tester à droite
 	if j != len(labyrinthe[0]) - 1 : #On regarde si on est au bord
 		if labyrinthe[i][j + 1] == -1 and labyrinthe[i][j + 2] != connexe :
 			mursAdmissibles.append((i, j + 1, labyrinthe[i][j + 2]))
-			
-#Tester en haut
-	
+
+	#Tester en haut
 	if i != 0 : #On regarde si on est au bord
 		if labyrinthe[i - 1][j] == -1 and labyrinthe[i - 2][j] != connexe :
 			mursAdmissibles.append((i -1, j, labyrinthe[i - 2][j]))
-	
-#Tester en bas
+
+	#Tester en bas
 	if i != len(labyrinthe) - 1 : #On regarde si on est au bord
 		if labyrinthe[i + 1][j] == -1 and labyrinthe[i + 2][j] != connexe :
 			mursAdmissibles.append((i + 1, j, labyrinthe[i + 2][j]))
-			
+
 	return mursAdmissibles
 
 def percerUnMur(labyrinthe : list, n : int, p : int) -> None :
 	"""
-	
 	Paramètres :
 		- labyrinthe : la matrice du labyrinthe dans lequel il faut ouvrir un mur
 		- n : nombres de lignes du labyrinthe (ne compte que les cases, pas le nombre réel de ligne de la matrice)
 		- p : nombre de colonnes du labyrinthe (ne compte que les cases, pas le nombre réel de colonnes)
-	
+
 	Procédure qui sélectionne aléatoirement deux cases mitoyennes et n'appartenant pas à la même composante connexe, retire le mur entre les deux et fusionne les composantes connexes.'
 
 	"""
-	i = rd.randint(0, n -1) * 2 #ligne de la case choisie
-	j = rd.randint(0, p - 1) * 2 #colonne de la case choisie
+	i = -1 # = rd.randint(0, n -1) * 2 #ligne de la case choisie
+	j = -1 # rd.randint(0, p - 1) * 2 #colonne de la case choisie
 	# Les mutliplications par deux assurent de ne pas tomber sur un mur mais bien sur une case
 	connexe = labyrinthe[i][j] #Numéro de la composante connexe de la case considérée
 	mursAdmissibles = [] #Initialisation d'une liste
-	
+
 	#Recherche d'un mur à casser
 	while len(mursAdmissibles) == 0 :
-		mursAdmissibles = estAdmissible(labyrinthe, i, j, connexe)
 		i = rd.randint(0, n -1) * 2
 		j = rd.randint(0, p - 1) * 2
-		
+		connexe = labyrinthe[i][j]
+		mursAdmissibles = estAdmissible(labyrinthe, i, j, connexe)
+
 	mur = mursAdmissibles[rd.randint(0, len(mursAdmissibles) - 1)] #Sélection du mur à casser
-	
+
 	connexe2 = mur[2]
 	connexeNouveau = min(connexe, connexe2)
 	connexeAncien = max(connexe, connexe2)
 	labyrinthe[mur[0]][mur[1]] = connexeNouveau
-	
+
 	for k in range(len(labyrinthe)) :
 		for l in range(len(labyrinthe[0])) :
 			if labyrinthe[k][l] == connexeAncien:
@@ -85,7 +103,7 @@ def genereCase(i: int, j: int, n: int, p: int) -> int:
 	# Mur
 	if i%2 == (j+1)%2:
 		return -1
-	
+
 	# chemin
 	if i%2==0 and j%2==0:
 		return i*p + j
@@ -268,7 +286,7 @@ def genererLabyrintheBrut(n: int, p: int) -> list[list[int]]:
 
 	return labyrinthe
 
-def genereLabyrinthe(n: int, p: int) -> list[list[int]]:
+def genereLabyrinthe(n: int, p: int, debug = False) -> list[list[int]]:
 	labyrinthe = genererLabyrintheBrut(n, p)
 
 	colonnes = p*2 -1
@@ -276,23 +294,8 @@ def genereLabyrinthe(n: int, p: int) -> list[list[int]]:
 
 	for i in range(n*p - 1):
 		percerUnMur(labyrinthe, n, p)
-
-	text = ""
-	for i in range(lignes):
-		line = ""
-		for j in range(colonnes):
-			n = labyrinthe[i][j]
-			if n < -9:
-				line += f"{labyrinthe[i][j]},"
-			elif n < -0:
-				line += f"0{labyrinthe[i][j]},"
-			else:
-				line += f"00{labyrinthe[i][j]},"
-		text += f"{line}\n"
-
-	with open("./out", "a") as file:
-		file.write(text)
-		file.write("----------------------------------------------\n")
+		if debug:
+			saveLabInFile(labyrinthe, lignes, colonnes, "./debug.txt")
 
 
 
