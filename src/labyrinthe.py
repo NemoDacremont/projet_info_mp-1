@@ -80,17 +80,119 @@ def percerUnMur(labyrinthe : list, n : int, p : int) -> None :
 def genereCase(i: int, j: int, n: int, p: int) -> int:
 	# Intersection mur
 	if i%2==1 and j%2==1:
-		return -2
+		return -4
 
 	# Mur
-	if i%2==(j+1)%2:
+	if i%2 == (j+1)%2:
 		return -1
 	
 	# chemin
 	if i%2==0 and j%2==0:
 		return i*p + j
 
-	return -5
+def formatteMur(labyrinthe, i, j):
+	n = len(labyrinthe) #* 2 - 1
+	p = len(labyrinthe[0])# * 2 - 1
+
+	vertical = False
+	horizontal = False
+	# Teste si le mur est vertical
+	if i==0:
+		vertical = True
+	else:
+		if labyrinthe[i-1][j] < -3:
+			vertical = True
+
+	if i == n-1:
+		vertical = True
+	else:
+		if labyrinthe[i+1][j] < -3:
+			vertical = True
+	
+	# test si le mur est horizontal
+	if j == 0:
+		horizontal = True
+	else:
+		if labyrinthe[i][j-1] < -3:
+			horizontal = True
+	
+	if j == p-1:
+		horizontal = True
+	else:
+		if labyrinthe[i][j+1] < -3:
+			horizontal = True
+
+	### On compile le tout
+	if horizontal:
+		labyrinthe[i][j] = -2
+	elif vertical:
+		labyrinthe[i][j] = -3
+	
+
+
+
+
+def formatteIntersection(labyrinthe, i, j):
+	n = len(labyrinthe)
+	p = len(labyrinthe[0])
+
+	horizontal_gauche = False
+	horizontal_droite = False
+	vertical_haut = False
+	vertical_bas = False
+	# Teste si le mur est vertical
+	if labyrinthe[i-1][j] < 0:
+		vertical_haut = True
+
+	if labyrinthe[i+1][j] < 0:
+		vertical_bas = True
+	
+	# test si le mur est horizontal
+	if labyrinthe[i][j-1] < 0:
+		horizontal_gauche = True
+	
+	if labyrinthe[i][j+1] < 0:
+		horizontal_droite = True
+
+	### On compile le tout
+	if vertical_bas and vertical_haut and horizontal_droite and horizontal_gauche:
+		labyrinthe[i][j] = -4
+
+	### 3 
+	elif vertical_bas and vertical_haut and horizontal_droite:
+		labyrinthe[i][j] = -5
+	elif vertical_bas and vertical_haut and horizontal_gauche:
+		labyrinthe[i][j] = -6
+	elif horizontal_gauche and horizontal_droite and vertical_bas:
+		labyrinthe[i][j] = -7
+	elif horizontal_gauche and horizontal_droite and vertical_haut:
+		labyrinthe[i][j] = -8
+	
+	## Coins
+	elif vertical_haut and horizontal_droite:
+		labyrinthe[i][j] = -9
+	elif vertical_haut and horizontal_gauche:
+		labyrinthe[i][j] = -10
+	elif vertical_bas and horizontal_droite:
+		labyrinthe[i][j] = -11
+	elif vertical_bas and horizontal_gauche:
+		labyrinthe[i][j] = -12
+
+	## droites
+	elif vertical_bas or vertical_haut:
+		labyrinthe[i][j] = -3
+	elif horizontal_gauche or horizontal_droite:
+		labyrinthe[i][j] = -2
+
+
+def formatteLabyrinthe(labyrinthe, n: int, p: int) :
+
+	for i in range(n):
+		for j in range(p):
+			if labyrinthe[i][j] == -1:
+				formatteMur(labyrinthe, i, j)
+			elif labyrinthe[i][j] == -4:
+				formatteIntersection(labyrinthe, i, j)				
 
 
 def genererLabyrintheBrut(n: int, p: int) -> list[list[int]]:
@@ -110,16 +212,41 @@ def genererLabyrintheBrut(n: int, p: int) -> list[list[int]]:
 def genereLabyrinthe(n: int, p: int) -> list[list[int]]:
 	labyrinthe = genererLabyrintheBrut(n, p)
 
+	colonnes = p*2 -1
+	lignes = n*2 -1
+
 	for i in range(n*p - 1):
 		percerUnMur(labyrinthe, n, p)
 
+	text = ""
+	for i in range(lignes):
+		line = ""
+		for j in range(colonnes):
+			n = labyrinthe[i][j]
+			if n < -9:
+				line += f"{labyrinthe[i][j]},"
+			elif n < -0:
+				line += f"0{labyrinthe[i][j]},"
+			else:
+				line += f"00{labyrinthe[i][j]},"
+		text += f"{line}\n"
+
+	with open("./out", "a") as file:
+		file.write(text)
+		file.write("----------------------------------------------\n")
+
+
+
+	formatteLabyrinthe(labyrinthe, lignes, colonnes)
 
 	return labyrinthe
 
 #lab = genereLabyrinthe(5, 5)
-lab= genereLabyrinthe(50, 50)
+'''
+lab= genereLabyrinthe(5, 5)
 for i in range(len(lab)):
 	line = ""
 	for j in range(len(lab[0])):
 		line += f"{lab[i][j]},"
 	print(f"[{line}]")
+'''
