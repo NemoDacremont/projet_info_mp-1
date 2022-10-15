@@ -11,7 +11,6 @@ OBJETS = {
 		"couleur": BLANC,
 		"caractere": "1"
 	},
-	
 	-2: {
 		"couleur": BLANC,
 		"caractere": "─"
@@ -90,7 +89,7 @@ def load(n, p):
 		file.write("----------------------------------------------\n")
 
 
-	return game 
+	return game
 
 ###
 ### Procedure update

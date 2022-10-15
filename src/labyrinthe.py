@@ -90,12 +90,32 @@ def genereCase(i: int, j: int, n: int, p: int) -> int:
 	if i%2==0 and j%2==0:
 		return i*p + j
 
-def formatteMur(labyrinthe, i, j):
-	n = len(labyrinthe) #* 2 - 1
-	p = len(labyrinthe[0])# * 2 - 1
+	# Même si ça ne devrait jamais arriver, on renvoie une valeur par défaut
+	return -99
+
+
+
+def formatteMur(labyrinthe, i: int, j: int, n: int, p: int):
+	"""
+		Type: Procédure
+		Paramètres:
+			- labyrinthe: la matrice encodant le labyrinthe
+			- i: entier, correspond à la ligne de l'élément à modifier
+			- j: entier, correspond à la colonne de l'élément à modifier
+			- n: entier, correspond au nombre de lignes de labyrinthe
+			- p: entier, correspond au nombre de colonnes de labyrinthe
+
+			- labyrinthe[i][j] doit impérativement correspondre à un mur, soit un élément
+			initialement encodé par un -1
+
+		Résumé:
+			transforme un mur quelconque en un mur horizontal ou vertical codé respectivement
+			par -2 et -3.
+	"""
 
 	vertical = False
 	horizontal = False
+
 	# Teste si le mur est vertical
 	if i==0:
 		vertical = True
@@ -108,14 +128,14 @@ def formatteMur(labyrinthe, i, j):
 	else:
 		if labyrinthe[i+1][j] < -3:
 			vertical = True
-	
+
 	# test si le mur est horizontal
 	if j == 0:
 		horizontal = True
 	else:
 		if labyrinthe[i][j-1] < -3:
 			horizontal = True
-	
+
 	if j == p-1:
 		horizontal = True
 	else:
@@ -127,38 +147,59 @@ def formatteMur(labyrinthe, i, j):
 		labyrinthe[i][j] = -2
 	elif vertical:
 		labyrinthe[i][j] = -3
-	
+
 
 
 
 
 def formatteIntersection(labyrinthe, i, j):
-	n = len(labyrinthe)
-	p = len(labyrinthe[0])
+	"""
+		Type: Procédure
+		Paramètres:
+			- labyrinthe: la matrice encodant le labyrinthe
+			- i: entier, correspond à la ligne de l'élément à modifier
+			- j: entier, correspond à la colonne de l'élément à modifier
 
+			- labyrinthe[i][j] doit impérativement correspondre à une intersection, soit un élément
+			initialement encodé par un -4
+
+		Résumé:
+			Comme formatteMur, permet de transformer une intersection en un angle si les coins ne
+			sont pas connectés
+
+			Exemple:
+				Si le l'intersection est connecté à gauche et en bas, alors "┼" deviendra "┐" à l'affichage
+	"""
+
+	# booléens caractérisant les liaisons
 	horizontal_gauche = False
 	horizontal_droite = False
 	vertical_haut = False
 	vertical_bas = False
-	# Teste si le mur est vertical
+
+	# teste d'une liaison au dessus
 	if labyrinthe[i-1][j] < 0:
 		vertical_haut = True
 
+	# teste d'une liaison en dessous
 	if labyrinthe[i+1][j] < 0:
 		vertical_bas = True
-	
-	# test si le mur est horizontal
+
+	# teste d'une liaison à gauche
 	if labyrinthe[i][j-1] < 0:
 		horizontal_gauche = True
-	
+
+	# teste d'une liaison à droite
 	if labyrinthe[i][j+1] < 0:
 		horizontal_droite = True
 
 	### On compile le tout
+
+	## 4 liaison
 	if vertical_bas and vertical_haut and horizontal_droite and horizontal_gauche:
 		labyrinthe[i][j] = -4
 
-	### 3 
+	## 3 liaisons
 	elif vertical_bas and vertical_haut and horizontal_droite:
 		labyrinthe[i][j] = -5
 	elif vertical_bas and vertical_haut and horizontal_gauche:
@@ -167,8 +208,8 @@ def formatteIntersection(labyrinthe, i, j):
 		labyrinthe[i][j] = -7
 	elif horizontal_gauche and horizontal_droite and vertical_haut:
 		labyrinthe[i][j] = -8
-	
-	## Coins
+
+	## 2 liaisons
 	elif vertical_haut and horizontal_droite:
 		labyrinthe[i][j] = -9
 	elif vertical_haut and horizontal_gauche:
@@ -178,7 +219,7 @@ def formatteIntersection(labyrinthe, i, j):
 	elif vertical_bas and horizontal_gauche:
 		labyrinthe[i][j] = -12
 
-	## droites
+	## 1 seule liaison
 	elif vertical_bas or vertical_haut:
 		labyrinthe[i][j] = -3
 	elif horizontal_gauche or horizontal_droite:
@@ -186,20 +227,38 @@ def formatteIntersection(labyrinthe, i, j):
 
 
 def formatteLabyrinthe(labyrinthe, n: int, p: int) :
+	"""
+		Type: Procédure
+		Paramètres:
+			- labyrinthe: la matrice encodant le labyrinthe
+			- i: entier, correspond à la ligne de l'élément à modifier
+			- j: entier, correspond à la colonne de l'élément à modifier
+			- n: entier, correspond au nombre de lignes de labyrinthe
+			- p: entier, correspond au nombre de colonnes de labyrinthe
+
+		Résumé:
+			Permet de formatter les murs et les intersections du labyrinte à des
+			fins d'affichage, les murs deviennent horizontaux ou verticaux et les
+			intersections des coins...
+	"""
 
 	for i in range(n):
 		for j in range(p):
 			if labyrinthe[i][j] == -1:
-				formatteMur(labyrinthe, i, j)
+				formatteMur(labyrinthe, i, j, n, p)
 			elif labyrinthe[i][j] == -4:
-				formatteIntersection(labyrinthe, i, j)				
+				formatteIntersection(labyrinthe, i, j)
 
 
 def genererLabyrintheBrut(n: int, p: int) -> list[list[int]]:
 	"""
-		n: nombre de lignes du labyrinthe
-		p: nombre
-		Génère un labyrinthe de dimension n*p
+		Type: Fonction
+		Paramètres:
+			- n: nombre de lignes du labyrinthe
+			- p: nombre
+
+		Résumé:
+			Génère un labyrinthe de dimension n*p
 	"""
 
 	colonnes = p*2 -1
