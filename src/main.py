@@ -3,6 +3,8 @@ import jeu
 from my_curses import *
 
 main(jeu.run)
+#jeu.load(5, 5)
+
 '''
 game = jeu.load(10,10)
 for i in range(game["lignes"]):

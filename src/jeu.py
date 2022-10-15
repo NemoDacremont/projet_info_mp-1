@@ -71,23 +71,6 @@ def load(n, p):
 		"isRunning": True
 	}
 
-	text = ""
-	for i in range(game["lignes"]):
-		line = ""
-		for j in range(game["colonnes"]):
-			n = game['labyrinthe'][i][j]
-			if n < -9:
-				line += f"{game['labyrinthe'][i][j]},"
-			elif n < -0:
-				line += f"0{game['labyrinthe'][i][j]},"
-			else:
-				line += f"00{game['labyrinthe'][i][j]},"
-		text += f"{line}\n"
-
-	with open("./out", "a") as file:
-		file.write(text)
-		file.write("----------------------------------------------\n")
-
 
 	return game
 
@@ -97,7 +80,7 @@ def load(n, p):
 
 def update(game):
 	"""
-		Met à jour les données du jeu	
+		Met à jour les données du jeu
 	"""
 
 	keypressed()
@@ -113,18 +96,64 @@ def draw(game):
 	"""
 	clear()
 
-	for i in range(game["lignes"]):
-		for j in range(game["colonnes"]):
+	nbLignes = game["lignes"]
+	nbColonne = game["colonnes"]
+
+	##
+	## 	Affiche les bordures
+	##
+
+	# Affiche les coins
+	print_at_xy(0, 0, "┌")
+	print_at_xy(0, nbLignes + 1,"└")
+	print_at_xy(nbColonne + 1, 0,"┐")
+	print_at_xy(nbColonne + 1, nbLignes + 1,"┘")
+
+	# Affiche les colonnes de gauche et droite
+	for i in range(nbLignes):
+		p = nbColonne + 1
+		caractere0 = "│" # caractère sur la première colonne
+		caractereP = "│" # caractère sur la colonne p
+
+		if game["labyrinthe"][i][0] < 0:
+			caractere0 = "├"
+		if game["labyrinthe"][i][-1] < 0:
+			caractereP = "┤"
+
+		print_at_xy(0, i+1, caractere0)
+		print_at_xy(p, i+1, caractereP)
+
+	# Affiche les lignes du haut et bas
+	for j in range(nbColonne):
+		n = nbLignes + 1
+		caractere0 = "─" # caractère sur la première ligne
+		caractereN = "─" # caractère sur la ligne n
+
+		if game["labyrinthe"][0][j] < 0:
+			caractere0 = "┬"
+		if game["labyrinthe"][-1][j] < 0:
+			caractereN = "┴"
+
+		print_at_xy(j+1, 0, caractere0)
+		print_at_xy(j+1, n, caractereN)
+
+
+	##
+	##		Affiche le labyrinthe
+	##
+
+	for i in range(nbLignes):
+		for j in range(nbColonne):
 			caractere = OBJETS[ game["labyrinthe"][i][j] ]["caractere"]
 			couleur = OBJETS[ game["labyrinthe"][i][j] ]["couleur"]
 			#caractere = str(game["labyrinthe"][i][j])
 
 			set_color(couleur)
-			print_at_xy(j, i, caractere)
+			print_at_xy(j+1, i+1, caractere)
 
 
 def run():
-	game = load(19, 76)
+	game = load(20, 80)
 	draw(game)
 	while game["isRunning"]:
 		update(game)
