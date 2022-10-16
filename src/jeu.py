@@ -1,75 +1,47 @@
 
-from labyrinthe import genereLabyrinthe
 from my_curses import *
 
-OBJETS = {
-	0: {
-		"couleur": BLANC,
-		"caractere": " "
-	},
-	-1: {
-		"couleur": BLANC,
-		"caractere": "1"
-	},
-	-2: {
-		"couleur": BLANC,
-		"caractere": "─"
-	},
-	-3: {
-		"couleur": BLANC,
-		"caractere": "│"
-	},
-	-4: {
-		"couleur": BLANC,
-		"caractere": "┼"
-	},
-	-5: {
-		"couleur": BLANC,
-		"caractere": "├"
-	},
-	-6: {
-		"couleur": BLANC,
-		"caractere": "┤"
-	},
-	-7: {
-		"couleur": BLANC,
-		"caractere": "┬"
-	},
-	-8: {
-		"couleur": BLANC,
-		"caractere": "┴"
-	},
-	-9: {
-		"couleur": BLANC,
-		"caractere": "└"
-	},
-	-10: {
-		"couleur": BLANC,
-		"caractere": "┘"
-	},
-	-11: {
-		"couleur": BLANC,
-		"caractere": "┌"
-	},
-	-12: {
-		"couleur": BLANC,
-		"caractere": "┐"
-	}
-}
+from labyrinthe import *
+from joueur import *
+from brouillard import *
+
+# Donne l'affichage des caractères
+from affichage import *
+
 
 ###
-### Procedure load
+### Fonction charge
 ###
 
-def load(n, p):
+def charge(n, p):
+	"""
+		Type: Fonction
+		paramètres:
+			- n: entier, correspond au nombre de lignes contenant des chemins avant la destruction de murs
+			- p: entier, correspond au nombre de colonnes contenant des chemins avant la destruction de murs
 
+		Retourne: un dictionnaire au format de jeu
+	"""
+
+	nbLignes = 2*n - 1
+	nbColonnes = 2*p - 1
+
+	no_delay(True)
+
+	joueur = creeJoueur(n, p)
 
 	game = {
 		"labyrinthe": genereLabyrinthe(n, p),
-		"lignes": 2*n - 1,
-		"colonnes": 2*p - 1,
-		"isRunning": True
+		"brouillard": creeBrouillard(n, p),
+		"lignes": nbLignes,
+		"colonnes": nbColonnes,
+		"utiliseBrouillard": True,
+		"isRunning": True,
+
+		"joueur": joueur
 	}
+
+	metAJourBrouillard(game["brouillard"], joueur["iJoueur"], joueur["jJoueur"], joueur["distanceVue"])
 
 
 	return game
@@ -80,11 +52,30 @@ def load(n, p):
 
 def update(game):
 	"""
-		Met à jour les données du jeu
+		Type: Procédure
+		paramètre:
+			- game: dictionnaire au format de jeu
+
+		Résumé:
+			Met à jour les données du jeu
 	"""
 
-	keypressed()
-	game["isRunning"] = False
+	labyrinthe = game["labyrinthe"]
+	brouillard = game["brouillard"]
+	joueur = game["joueur"]
+
+
+	keyPressed = keypressed()
+
+	metAJourJoueur(labyrinthe, joueur, keyPressed)
+
+	if keyPressed == "x":
+		game["isRunning"] = False
+
+	if keyPressed == "p":
+		game["utiliseBrouillard"] = not game["utiliseBrouillard"]
+
+	metAJourBrouillard(brouillard, joueur["iJoueur"], joueur["jJoueur"], joueur["distanceVue"])
 
 ###
 ### Procedure draw
@@ -92,81 +83,37 @@ def update(game):
 
 def draw(game):
 	"""
-		Affiche l'interface
+		Type: Procédure
+		paramètre:
+			- game: dictionnaire au format de jeu
+
+		Résumé:
+			Met à jour l'affichage du jeu
+
 	"""
 	clear()
 
-	nbLignes = game["lignes"]
-	nbColonne = game["colonnes"]
+	# copie des variables pour alléger les notations
+	brouillard = game["brouillard"]
+	labyrinthe = game["labyrinthe"]
+	utiliseBrouillard  = game["utiliseBrouillard"]
 
-	##
-	## 	Affiche les bordures
-	##
+	afficheBordure(labyrinthe)
+	afficheLabryinthe(labyrinthe, brouillard, utiliseBrouillard)
 
-	# Affiche les coins
-	print_at_xy(0, 0, "┌")
-	print_at_xy(0, nbLignes + 1,"└")
-	print_at_xy(nbColonne + 1, 0,"┐")
-	print_at_xy(nbColonne + 1, nbLignes + 1,"┘")
-
-	# Affiche les colonnes de gauche et droite
-	for i in range(nbLignes):
-		p = nbColonne + 1
-		caractere0 = "│" # caractère sur la première colonne
-		caractereP = "│" # caractère sur la colonne p
-
-		if game["labyrinthe"][i][0] < 0:
-			caractere0 = "├"
-		if game["labyrinthe"][i][-1] < 0:
-			caractereP = "┤"
-
-		print_at_xy(0, i+1, caractere0)
-		print_at_xy(p, i+1, caractereP)
-
-	# Affiche les lignes du haut et bas
-	for j in range(nbColonne):
-		n = nbLignes + 1
-		caractere0 = "─" # caractère sur la première ligne
-		caractereN = "─" # caractère sur la ligne n
-
-		if game["labyrinthe"][0][j] < 0:
-			caractere0 = "┬"
-		if game["labyrinthe"][-1][j] < 0:
-			caractereN = "┴"
-
-		print_at_xy(j+1, 0, caractere0)
-		print_at_xy(j+1, n, caractereN)
+	afficheJoueur(game["joueur"])
 
 
-	##
-	##		Affiche le labyrinthe
-	##
-
-	for i in range(nbLignes):
-		for j in range(nbColonne):
-			caractere = OBJETS[ game["labyrinthe"][i][j] ]["caractere"]
-			couleur = OBJETS[ game["labyrinthe"][i][j] ]["couleur"]
-			#caractere = str(game["labyrinthe"][i][j])
-
-			set_color(couleur)
-			print_at_xy(j+1, i+1, caractere)
 
 
 def run():
-	game = load(20, 80)
+	game = charge(20, 80)
+
+	## On affiche une première fois le jeu
 	draw(game)
+
 	while game["isRunning"]:
 		update(game)
 		draw(game)
-
-	for i in range(game["lignes"]):
-
-		line = ""
-		for j in range(game["colonnes"]):
-			line += f"{game['labyrinthe'][i][j]},"
-		print(f"[{line}]")
-
-
-
-
+		no_delay(False)
 
