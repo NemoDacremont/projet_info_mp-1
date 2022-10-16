@@ -1,7 +1,11 @@
 
 import random as rd
+from affichage import *
 
 def saveLabInFile(labyrinthe, n: int, p: int, fileName: str, mode = "a"):
+	"""
+		Procédure pour débugger le labyrinthe
+	"""
 	text = ""
 	for i in range(n):
 		line = ""
@@ -303,12 +307,85 @@ def genereLabyrinthe(n: int, p: int, debug = False) -> list[list[int]]:
 
 	return labyrinthe
 
-#lab = genereLabyrinthe(5, 5)
-'''
-lab= genereLabyrinthe(5, 5)
-for i in range(len(lab)):
-	line = ""
-	for j in range(len(lab[0])):
-		line += f"{lab[i][j]},"
-	print(f"[{line}]")
-'''
+
+def afficheLabryinthe(labryinthe, brouillard, utiliseBrouillard):
+	"""
+		Type: Procédure
+		Paramètres:
+			- labryinthe: type: labryinthe
+			- brouillard: type: brouillard
+			- utiliseBrouillard: type: booléen, caractérise si on utilise le brouillard ou non
+
+		Résumé:
+			Affiche le labyrinthe, si utiliseBrouillard est True: affiche seulement les cases
+			découvertes, sinon affiche tout le labyrinthe
+
+	"""
+
+	nbLignes = len(labryinthe)
+	nbColonne = len(labryinthe[0])
+
+	for i in range(nbLignes):
+		for j in range(nbColonne):
+			# On n'affiche pas la case si elle n'a pas encore été découverte
+			if utiliseBrouillard and not brouillard[i][j]:
+				continue
+
+			caractere = affichage[ labryinthe[i][j] ]["caractere"]
+			couleur = affichage[ labryinthe[i][j] ]["couleur"]
+
+			set_color(couleur)
+			print_at_xy(j+1, i+1, caractere)
+
+
+def afficheBordure(labyrinthe):
+	"""
+		Type: Procédure
+		Paramètres:
+			- labryinthe: type: labryinthe
+
+		Résumé:
+			Affiche les bordures du labyrinthe
+			Les affiches toutes malgré le fait qu'elles ne soient pas découvertes par le joueur
+
+	"""
+	nbLignes = len(labyrinthe)
+	nbColonne = len(labyrinthe[0])
+
+	# Affiche les coins
+	set_color(BLANC)
+	print_at_xy(0, 0, "┌")
+	print_at_xy(0, nbLignes + 1,"└")
+	print_at_xy(nbColonne + 1, 0,"┐")
+	print_at_xy(nbColonne + 1, nbLignes + 1,"┘")
+
+	# Affiche les colonnes de gauche et droite
+	for i in range(nbLignes):
+		p = nbColonne + 1
+		caractere0 = "│" # caractère sur la première colonne
+		caractereP = "│" # caractère sur la colonne p
+
+		if labyrinthe[i][0] < 0:
+			caractere0 = "├"
+		if labyrinthe[i][-1] < 0:
+			caractereP = "┤"
+
+		print_at_xy(0, i+1, caractere0)
+		print_at_xy(p, i+1, caractereP)
+
+	# Affiche les lignes du haut et bas
+	for j in range(nbColonne):
+		n = nbLignes + 1
+		caractere0 = "─" # caractère sur la première ligne
+		caractereN = "─" # caractère sur la ligne n
+
+		if labyrinthe[0][j] < 0:
+			caractere0 = "┬"
+		if labyrinthe[-1][j] < 0:
+			caractereN = "┴"
+
+		print_at_xy(j+1, 0, caractere0)
+		print_at_xy(j+1, n, caractereN)
+
+
+
