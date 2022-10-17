@@ -5,7 +5,7 @@ from affichage import *
 from my_curses import *
 
 
-def creeCasque(labyrinthe: list, joueur: dict):
+def creeCarte(labyrinthe: list, joueur: dict):
 	"""
 		type: Fonction
 		paramètres:
@@ -16,15 +16,16 @@ def creeCasque(labyrinthe: list, joueur: dict):
 
 	i, j = selectionneCaseAleatoire(labyrinthe)
 
-	casque = {
-		"id": 50,
+	carte = {
+		"id": 51,
 		"i": i,
 		"j": j
 	}
-	labyrinthe[i][j] = 50
+	labyrinthe[i][j] = 51
 
-	return casque
+	return carte
 
-def utiliseCasque(joueur: dict):
-	joueur["distanceVue"] = 8
+def utiliseCarte(joueur: dict):
+	joueur["brouillardEstPersistant"] = True
+
 

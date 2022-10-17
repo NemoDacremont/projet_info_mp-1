@@ -5,8 +5,10 @@ from labyrinthe import *
 from joueur import *
 from brouillard import *
 
+from utils import selectionneCaseAleatoire
+
 # Donne l'affichage des caractères
-from affichage import *
+from objets.objets import *
 
 
 ###
@@ -28,20 +30,44 @@ def charge(n, p):
 
 	no_delay(True)
 
-	joueur = creeJoueur(n, p)
+	labyrinthe = genereLabyrinthe(n, p)
+	brouillard = creeBrouillard(n, p)
 
-	game = {
-		"labyrinthe": genereLabyrinthe(n, p),
-		"brouillard": creeBrouillard(n, p),
-		"lignes": nbLignes,
-		"colonnes": nbColonnes,
-		"utiliseBrouillard": True,
-		"isRunning": True,
+	joueur, depart = creeJoueur(labyrinthe)
+	iDepart = depart["i"]
+	jDepart = depart["j"]
 
-		"joueur": joueur
+	iArrivee, jArrivee = selectionneCaseAleatoire(labyrinthe)
+
+	labyrinthe[iArrivee][jArrivee] = 5
+	labyrinthe[iDepart][jDepart] = 4
+
+	arrivee = {
+		"i": iArrivee,
+		"j": jArrivee
 	}
 
-	metAJourBrouillard(game["brouillard"], joueur["iJoueur"], joueur["jJoueur"], joueur["distanceVue"])
+	objets = creeObjets(labyrinthe, joueur)
+
+	game = {
+		"brouillard": brouillard,
+		"utiliseBrouillard": True,
+
+		"labyrinthe": labyrinthe,
+		"lignes": nbLignes,
+		"colonnes": nbColonnes,
+
+		"isRunning": True,
+		"gagne": False,
+
+		"objets": objets,
+
+		"joueur": joueur,
+		"depart": depart,
+		"arrivee": arrivee
+	}
+
+	metAJourBrouillard(game["brouillard"], joueur, joueur["distanceVue"])
 
 
 	return game
@@ -63,6 +89,9 @@ def update(game):
 	labyrinthe = game["labyrinthe"]
 	brouillard = game["brouillard"]
 	joueur = game["joueur"]
+	objets = game["objets"]
+
+	arrivee = game["arrivee"]
 
 
 	keyPressed = keypressed()
@@ -75,13 +104,20 @@ def update(game):
 	if keyPressed == "p":
 		game["utiliseBrouillard"] = not game["utiliseBrouillard"]
 
-	metAJourBrouillard(brouillard, joueur["iJoueur"], joueur["jJoueur"], joueur["distanceVue"])
+	metAJourObjets(objets, labyrinthe, joueur)
+
+	brouillardEstPersistant = joueur["brouillardEstPersistant"]
+
+	metAJourBrouillard(brouillard, joueur, joueur["distanceVue"], brouillardEstPersistant)
+
+	if joueur["iJoueur"] == arrivee["i"] and joueur["jJoueur"] == arrivee["j"]:
+		game["gagne"] = True
 
 ###
 ### Procedure draw
 ###
 
-def draw(game):
+def affichage(game):
 	"""
 		Type: Procédure
 		paramètre:
@@ -93,27 +129,41 @@ def draw(game):
 	"""
 	clear()
 
-	# copie des variables pour alléger les notations
-	brouillard = game["brouillard"]
-	labyrinthe = game["labyrinthe"]
-	utiliseBrouillard  = game["utiliseBrouillard"]
+	if not game["gagne"]:
+		# copie des variables pour alléger les notations
+		brouillard = game["brouillard"]
+		labyrinthe = game["labyrinthe"]
+		utiliseBrouillard  = game["utiliseBrouillard"]
+		objets = game["objets"]
 
-	afficheBordure(labyrinthe)
-	afficheLabryinthe(labyrinthe, brouillard, utiliseBrouillard)
+		afficheBordure(labyrinthe)
+		afficheLabryinthe(labyrinthe, brouillard, utiliseBrouillard)
 
-	afficheJoueur(game["joueur"])
+		## Affiche le joueur
+		afficheJoueur(game["joueur"])
 
+	else:
+		print_str("You win.")
 
-
+##
+## Procédure Run
+##
 
 def run():
-	game = charge(20, 80)
+	"""
+		Type: Procedure
+
+		Résumé:
+			Lance réellement le jeu
+	"""
+
+	game = charge(16, 75)
 
 	## On affiche une première fois le jeu
-	draw(game)
+	affichage(game)
 
 	while game["isRunning"]:
 		update(game)
-		draw(game)
+		affichage(game)
 		no_delay(False)
 

@@ -1,6 +1,9 @@
 
 from random import randint
 from my_curses import *
+from objets.objets import utiliseObjet
+
+from utils import selectionneCaseAleatoire
 
 from affichage import *
 
@@ -9,7 +12,7 @@ from affichage import *
 ## creeJoueur
 ##
 
-def creeJoueur(n, p, distanceVue = 4):
+def creeJoueur(labyrinthe: list, distanceVue = 4):
 	"""
 		Type: Fonction
 		Paramètre:
@@ -21,16 +24,25 @@ def creeJoueur(n, p, distanceVue = 4):
 			Un dictionnaire du format d'un joueur
 	"""
 
+	iJoueur, jJoueur = selectionneCaseAleatoire(labyrinthe)
+
 	joueur = {
-		"iJoueur": randint(0, n) * 2,
-		"jJoueur": randint(0, p) * 2,
-		"distanceVue": distanceVue
+		"iJoueur": iJoueur,
+		"jJoueur": jJoueur,
+		"distanceVue": distanceVue,
+		"brouillardEstPersistant": False,
+		"godmode": False
 	}
 
-	return joueur
+	depart = {
+		"i": iJoueur,
+		"j": jJoueur
+	}
+
+	return joueur, depart
 
 ##
-## 	Update
+## 	Mise à jour
 ##
 
 def metAJourJoueur(labyrinthe, joueur, keyPressed):
@@ -55,27 +67,33 @@ def metAJourJoueur(labyrinthe, joueur, keyPressed):
 
 	iJoueur = joueur["iJoueur"]
 	jJoueur = joueur["jJoueur"]
+	godmode = joueur["godmode"]
 
 
 	## Se déplace vers le bas
 	if keyPressed == "s" or keyPressed == "KEY_DOWN":
-		if iJoueur + 1 < nbLignes and labyrinthe[iJoueur + 1][jJoueur] >= 0:
+		if iJoueur + 1 < nbLignes and (labyrinthe[iJoueur + 1][jJoueur] >= 0 or godmode):
 			joueur["iJoueur"] += 1
 
 	## Se déplace vers le haut
 	elif keyPressed == "z" or keyPressed == "KEY_UP":
-		if iJoueur - 1 >= 0 and labyrinthe[iJoueur - 1][jJoueur] >= 0:
+		if iJoueur - 1 >= 0 and (labyrinthe[iJoueur - 1][jJoueur] >= 0 or godmode):
 			joueur["iJoueur"] -= 1
 
 	## Se déplace vers la gauche
 	elif keyPressed == "q" or keyPressed == "KEY_LEFT":
-		if jJoueur - 1 >= 0 and labyrinthe[iJoueur][jJoueur - 1] >= 0:
+		if jJoueur - 1 >= 0 and (labyrinthe[iJoueur][jJoueur - 1] >= 0 or godmode):
 			joueur["jJoueur"] -= 1
 
 	## Se déplace vers la droite
-	elif keyPressed == "d" or keyPressed == "KEY_RIGHT":
-		if jJoueur + 1 < nbColonnes and labyrinthe[iJoueur][jJoueur + 1] >= 0:
+	elif keyPressed == "d" or (keyPressed == "KEY_RIGHT" or godmode):
+		if jJoueur + 1 < nbColonnes and (labyrinthe[iJoueur][jJoueur + 1] >= 0 or godmode):
 			joueur["jJoueur"] += 1
+
+
+	## Godmod
+	if keyPressed == "g":
+		joueur["godmode"] = not godmode
 
 
 def afficheJoueur(joueur):

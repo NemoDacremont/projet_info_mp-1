@@ -2,6 +2,16 @@
 from my_curses import *
 
 affichage = {
+	# Objets
+	51: {
+		"couleur": JAUNE,
+		"caractere": "█"
+	},
+	50: {
+		"couleur": JAUNE,
+		"caractere": "▲"
+	},
+
 	# Chemin
 
 	0: {
@@ -64,6 +74,16 @@ affichage = {
 	"joueur": {
 		"couleur": BLEU,
 		"caractere": "☺"
+	},
+
+	## Depart et Arrivee
+	4: {
+		"couleur": VERT,
+		"caractere": "D"
+	},
+	5: {
+		"couleur": VERT,
+		"caractere": "A"
 	}
 }
 

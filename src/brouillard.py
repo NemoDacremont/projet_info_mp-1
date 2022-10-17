@@ -15,29 +15,43 @@ def creeBrouillard(n: int, p: int):
 	brouillard = [[0 for j in range(nbColonnes)] for i in range(nbLignes)]
 	return brouillard
 
-def metAJourBrouillard(brouillard, iPlayer: int, jPlayer: int, distanceVue: int):
+def metAJourBrouillard(brouillard: list, joueur: dict, distanceVue: int, brouillardEstPersistant: bool = False):
 	"""
 		Type: procédure
 		Paramètres:
 			- brouillard: brouillard à mettre à jour
 			- iPlayer:
+			- brouillardEstPersistant: bool = False
 
 		Résumé:
 			Met à jour les cases découvertes par le joueur
 	"""
+	iJoueur = joueur["iJoueur"]
+	jJoueur = joueur["jJoueur"]
 	nbLignes = len(brouillard)
 	nbColonnes = len(brouillard[0])
 
 	# Actualise chaque cases dans un rayon de distanceVue
-	for i in range(-distanceVue, distanceVue):
-		for j in range(-distanceVue + abs(i), distanceVue - abs(i)):
+	if brouillardEstPersistant:
+		for i in range(-distanceVue, distanceVue):
+			for j in range(-distanceVue + abs(i), distanceVue - abs(i)):
 
-			if iPlayer + i > nbLignes-1 or jPlayer + j > nbColonnes-1:
-				continue
-			if iPlayer + i < 0 or jPlayer + j < 0:
-				continue
+				# Teste si les cases à modifier ne sont pas pas en réalité hors du labyrinthe, ie quand on est au bord
+				if iJoueur + i > nbLignes-1 or jJoueur + j > nbColonnes-1:
+					continue
+				if iJoueur + i < 0 or jJoueur + j < 0:
+					continue
 
-			brouillard[iPlayer + i][jPlayer + j] = 1
+				brouillard[iJoueur + i][jJoueur + j] = 1
+
+	else:
+		for i in range(nbLignes):
+			for j in range(nbColonnes):
+				if (i - iJoueur)**2 + (j - jJoueur)**2 < distanceVue**2:
+					brouillard[i][j] = 1
+				else:
+					brouillard[i][j] = 0
+
 
 
 
