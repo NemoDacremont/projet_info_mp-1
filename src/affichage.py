@@ -64,6 +64,12 @@ affichage = {
 	"joueur": {
 		"couleur": BLEU,
 		"caractere": "☺"
+	},
+	
+	## Spectre
+	"spectre" : {
+		"couleur" : ROUGE,
+		"caractere" : "☺"
 	}
 }
 
