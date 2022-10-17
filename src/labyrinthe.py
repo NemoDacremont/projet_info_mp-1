@@ -272,7 +272,7 @@ def formatteLabyrinthe(labyrinthe, n: int, p: int) :
 				formatteIntersection(labyrinthe, i, j)
 
 
-def genererLabyrintheBrut(n: int, p: int) -> list[list[int]]:
+def genererLabyrintheBrut(n: int, p: int) -> list[list]:
 	"""
 		Type: Fonction
 		Paramètres:
@@ -290,7 +290,7 @@ def genererLabyrintheBrut(n: int, p: int) -> list[list[int]]:
 
 	return labyrinthe
 
-def genereLabyrinthe(n: int, p: int, debug = False) -> list[list[int]]:
+def genereLabyrinthe(n: int, p: int, debug = False) -> list[list]:
 	labyrinthe = genererLabyrintheBrut(n, p)
 
 	colonnes = p*2 -1
