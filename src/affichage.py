@@ -84,6 +84,12 @@ affichage = {
 	5: {
 		"couleur": VERT,
 		"caractere": "A"
+	},
+	
+	## Spectre
+	"spectre" : {
+		"couleur" : ROUGE,
+		"caractere" : "☺"
 	}
 }
 
