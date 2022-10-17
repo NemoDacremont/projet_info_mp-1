@@ -8,9 +8,9 @@ def selectionneCaseAleatoire(labyrinthe):
 	i = 0
 	j = 0
 	x = -1
-	while x < 0:
-		i = randint(0, nbLignes)
-		j = randint(0, nbColonnes)
+	while x != 0:
+		i = randint(0, nbLignes - 1)
+		j = randint(0, nbColonnes - 1)
 
 		x = labyrinthe[i][j]
 
