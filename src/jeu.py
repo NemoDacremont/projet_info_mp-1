@@ -4,6 +4,7 @@ from my_curses import *
 from labyrinthe import *
 from joueur import *
 from brouillard import *
+from ennemis.spectre import *
 
 from utils import selectionneCaseAleatoire
 
@@ -36,7 +37,9 @@ def charge(n, p):
 	joueur, depart = creeJoueur(labyrinthe)
 	iDepart = depart["i"]
 	jDepart = depart["j"]
-
+	
+	spectre = creeSpectre(labyrinthe, joueur)
+	
 	iArrivee, jArrivee = selectionneCaseAleatoire(labyrinthe)
 
 	labyrinthe[iArrivee][jArrivee] = 5
@@ -63,6 +66,7 @@ def charge(n, p):
 		"objets": objets,
 
 		"joueur": joueur,
+		"spectre" : spectre,
 		"depart": depart,
 		"arrivee": arrivee
 	}
@@ -103,6 +107,8 @@ def update(game):
 
 	if keyPressed == "p":
 		game["utiliseBrouillard"] = not game["utiliseBrouillard"]
+	
+	metAJourSpectre(labyrinthe, spectre, joueur)
 
 	metAJourObjets(objets, labyrinthe, joueur)
 
@@ -135,6 +141,7 @@ def affichage(game):
 		labyrinthe = game["labyrinthe"]
 		utiliseBrouillard  = game["utiliseBrouillard"]
 		objets = game["objets"]
+		spectre = game["spectre"]
 
 		afficheBordure(labyrinthe)
 		afficheLabryinthe(labyrinthe, brouillard, utiliseBrouillard)

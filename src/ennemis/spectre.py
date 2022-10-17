@@ -1,5 +1,4 @@
 from random import randint
-from my_curses import *
 from pathfinding import *
 from affichage import *
 

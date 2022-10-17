@@ -20,22 +20,22 @@ def cheminsPossibles(labyrinthe : list, i : int, j : int, depart : tuple) -> lis
 
 	#Tester à gauche
 	if j != 0 : #On regarde si on est au bord
-		if labyrinthe[i][j - 1] == 0 and j - 1 != depart[1] :
+		if labyrinthe[i][j - 1] <= 0 and j - 1 != depart[1] :
 			cheminsAdmissibles.append((i, j - 1))
 
 	#Tester à droite
 	if j != len(labyrinthe[0]) - 1 : #On regarde si on est au bord
-		if labyrinthe[i][j + 1] == 0 and j + 1 != depart[1] :
+		if labyrinthe[i][j + 1] <= 0 and j + 1 != depart[1] :
 			cheminsAdmissibles.append((i, j + 1))
 
 	#Tester en haut
 	if i != 0 : #On regarde si on est au bord
-		if labyrinthe[i - 1][j] == 0 and i - 1 != depart[0] :
+		if labyrinthe[i - 1][j] <= 0 and i - 1 != depart[0] :
 			cheminsAdmissibles.append((i - 1, j))
 
 	#Tester en bas
 	if i != len(labyrinthe) - 1 : #On regarde si on est au bord
-		if labyrinthe[i + 1][j] == 0 and i + 1 != depart[0] :
+		if labyrinthe[i + 1][j] <= 0 and i + 1 != depart[0] :
 			cheminsAdmissibles.append((i + 1, j))
 
 	return cheminsAdmissibles
