@@ -38,14 +38,19 @@ def creeSpectre(labyrinthe : list, joueur : dict) -> dict :
 		"iSpectre" : iSpectre,
 		"jSpectre" : jSpectre,
 		"chemin" : chemin,
-		"mouvement" : 0}
+		"mouvement" : 0,
+		"vitesse" : 3}
 
 	return Spectre
 
 def teleportation(labyrinthe : list, Spectre : dict, Joueur : dict) -> None :
+	n = len(labyrinthe) // 2
+	p = len(labyrinthe[0]) // 2
 	iJoueur = Joueur["iJoueur"]
 	jJoueur = Joueur["jJoueur"]
 	cheminBrut = trouverLeChemin(labyrinthe, iJoueur, jJoueur)
+	while len(cheminBrut) < (n + p) // 2 :
+		cheminBrut = trouverLeChemin(labyrinthe, iJoueur, jJoueur)
 	chemin = []
 	#On retourne le chemin pour qu'il aille du Joueur au Spectre, et pas l'inverse
 	for i in range(1, len(cheminBrut)) :
@@ -57,10 +62,11 @@ def teleportation(labyrinthe : list, Spectre : dict, Joueur : dict) -> None :
 	#On met à jour le chemin du Spectre
 	Spectre["chemin"] = chemin
 
-def metAJourSpectre(labyrinthe : list, Spectre : dict, Joueur : dict) -> None :
+def metAJourSpectre(labyrinthe : list, Spectre : dict, Joueur : dict, jeu : dict, minotaure : dict) -> None :
 	iJoueur = Joueur["iJoueur"]
 	jJoueur = Joueur["jJoueur"]
 	chemin = Spectre["chemin"]
+	temps = jeu["referenceTemps"]
 	#On vérifie que le joueur n'est pas à-côté du Spectre
 	if len(chemin) > 1 :
 		
@@ -72,7 +78,8 @@ def metAJourSpectre(labyrinthe : list, Spectre : dict, Joueur : dict) -> None :
 		elif (iJoueur, jJoueur) != chemin[0] :
 			Spectre["chemin"] = [(iJoueur, jJoueur)] + chemin
 		#Ensuite, le sepctre avance vers le joueur (s'il a le droit de bouger)
-		if Spectre["mouvement"] % 3 == 0 :
+		if Spectre["mouvement"] >= temps :
+			Spectre["mouvement"] = Spectre["mouvement"] % temps
 			Spectre["iSpectre"] = chemin[-1][0]
 			Spectre["jSpectre"] = chemin[-1][1]
 			Spectre["chemin"].pop()
@@ -82,9 +89,10 @@ def metAJourSpectre(labyrinthe : list, Spectre : dict, Joueur : dict) -> None :
 		Spectre["iSpectre"] = Joueur["iJoueur"]
 		Spectre["jSpectre"] = Joueur["jJoueur"]
 		teleportation(labyrinthe, Spectre, Joueur)
+		minotaure["vitesse"] += 1
 	
 	#Enfin, on met à jour la variable de mouvement
-	Spectre["mouvement"] += 1
+	Spectre["mouvement"] += Spectre["vitesse"]
 	
 
 def afficheSpectre(spectre : dict, brouillard, utiliseBrouillard) -> None:

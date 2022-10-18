@@ -86,9 +86,13 @@ affichage = {
 		"caractere": "A"
 	},
 
-	## Spectre
-	"spectre" : {
+	## Ennemis
+	"minotaure" : {
 		"couleur" : ROUGE,
+		"caractere" : "☺"},
+	
+	"spectre" : {
+		"couleur" : MAGENTA,
 		"caractere" : "☺"
 	}
 }

@@ -5,6 +5,7 @@ from labyrinthe import *
 from joueur import *
 from brouillard import *
 from ennemis.spectre import *
+from ennemis.minotaure import *
 
 from utils import selectionneCaseAleatoire
 
@@ -39,6 +40,7 @@ def charge(n, p):
 	jDepart = depart["j"]
 	
 	spectre = creeSpectre(labyrinthe, joueur)
+	minotaure = creeMinotaure(labyrinthe)
 	
 	iArrivee, jArrivee = selectionneCaseAleatoire(labyrinthe)
 
@@ -62,13 +64,17 @@ def charge(n, p):
 
 		"isRunning": True,
 		"gagne": False,
+		"perdre" : False,
 
 		"objets": objets,
 
 		"joueur": joueur,
 		"spectre" : spectre,
+		"minotaure" : minotaure,
 		"depart": depart,
-		"arrivee": arrivee
+		"arrivee": arrivee,
+		
+		"referenceTemps" : 10
 	}
 
 	metAJourBrouillard(game["brouillard"], joueur, joueur["distanceVue"])
@@ -96,6 +102,7 @@ def update(game):
 	objets = game["objets"]
 
 	spectre = game["spectre"]
+	minotaure = game["minotaure"]
 
 	arrivee = game["arrivee"]
 
@@ -110,7 +117,8 @@ def update(game):
 	if keyPressed == "p":
 		game["utiliseBrouillard"] = not game["utiliseBrouillard"]
 
-	metAJourSpectre(labyrinthe, spectre, joueur)
+	metAJourSpectre(labyrinthe, spectre, joueur, game, minotaure)
+	metAJourMinotaure(game, minotaure, joueur)
 
 	metAJourObjets(objets, labyrinthe, joueur)
 
@@ -137,23 +145,28 @@ def affichage(game):
 	"""
 	clear()
 
-	if not game["gagne"]:
+	if not game["gagne"] and not game["perdre"]:
 		# copie des variables pour alléger les notations
 		brouillard = game["brouillard"]
 		labyrinthe = game["labyrinthe"]
 		utiliseBrouillard  = game["utiliseBrouillard"]
 		objets = game["objets"]
 		spectre = game["spectre"]
+		minotaure = game["minotaure"]
 
 		afficheBordure(labyrinthe)
 		afficheLabryinthe(labyrinthe, brouillard, utiliseBrouillard)
 
 		afficheSpectre(spectre, brouillard, utiliseBrouillard)
+		afficheMinotaure(minotaure, brouillard, utiliseBrouillard)
 
 
 		## Affiche le joueur
 		afficheJoueur(game["joueur"])
-
+	
+	elif game["perdre"] :
+		print_str("You loose.")
+		
 	else:
 		print_str("You win.")
 
