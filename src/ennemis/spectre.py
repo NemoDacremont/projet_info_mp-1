@@ -38,7 +38,7 @@ def creeSpectre(labyrinthe : list, joueur : dict) -> dict :
 		"iSpectre" : iSpectre,
 		"jSpectre" : jSpectre,
 		"chemin" : chemin,
-		"touche" : 0}
+		"mouvement" : 0}
 
 	return Spectre
 
@@ -68,28 +68,38 @@ def metAJourSpectre(labyrinthe : list, Spectre : dict, Joueur : dict) -> None :
 		if (iJoueur, jJoueur) == chemin[1] :
 			Spectre["chemin"] = chemin[1 :]
 		#Sinon le chemin devient plus long
-		else :
+		#Et on test également si le joueur reste sur place
+		elif (iJoueur, jJoueur) != chemin[0] :
 			Spectre["chemin"] = [(iJoueur, jJoueur)] + chemin
-		#Ensuite, le sepctre avance vers le joueur
-		Spectre["iSpectre"] = chemin[-1][0]
-		Spectre["jSpectre"] = chemin[-1][1]
-		Spectre["chemin"].pop()
-	
+		#Ensuite, le sepctre avance vers le joueur (s'il a le droit de bouger)
+		if Spectre["mouvement"] % 3 == 0 :
+			Spectre["iSpectre"] = chemin[-1][0]
+			Spectre["jSpectre"] = chemin[-1][1]
+			Spectre["chemin"].pop()
+		
 	#Dans le cas contraire, le Spectre touche le Joueur, qui est téléporté plus loin
 	else :
 		Spectre["iSpectre"] = Joueur["iJoueur"]
 		Spectre["jSpectre"] = Joueur["jJoueur"]
 		teleportation(labyrinthe, Spectre, Joueur)
+	
+	#Enfin, on met à jour la variable de mouvement
+	Spectre["mouvement"] += 1
+	
 
-def afficheSpectre(spectre : dict) -> None:
+def afficheSpectre(spectre : dict, brouillard, utiliseBrouillard) -> None:
+	
+	iSpectre = spectre["iSpectre"]
+	jSpectre = spectre["jSpectre"]
+	
+	if not utiliseBrouillard or brouillard[iSpectre][jSpectre] :
+		couleur = affichage["spectre"]["couleur"]
+		caractere = affichage["spectre"]["caractere"]
 
-	couleur = affichage["spectre"]["couleur"]
-	caractere = affichage["spectre"]["caractere"]
+		# On doit faire un déccalage de 1 à cause de l'affichage de la bordure
+		i = spectre["iSpectre"] + 1
+		j = spectre["jSpectre"] + 1
 
-	# On doit faire un déccalage de 1 à cause de l'affichage de la bordure
-	i = spectre["iSpectre"] + 1
-	j = spectre["jSpectre"] + 1
-
-	set_color(couleur)
-	print_at_xy(j, i, caractere)
+		set_color(couleur)
+		print_at_xy(j, i, caractere)
 

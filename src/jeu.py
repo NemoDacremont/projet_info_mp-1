@@ -148,7 +148,7 @@ def affichage(game):
 		afficheBordure(labyrinthe)
 		afficheLabryinthe(labyrinthe, brouillard, utiliseBrouillard)
 
-		afficheSpectre(spectre)
+		afficheSpectre(spectre, brouillard, utiliseBrouillard)
 
 
 		## Affiche le joueur
