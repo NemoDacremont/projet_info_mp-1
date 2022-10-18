@@ -69,12 +69,14 @@ def charge(n, p):
 		"objets": objets,
 
 		"joueur": joueur,
-		"spectre" : spectre,
+		"spectre" : [spectre],
 		"minotaure" : minotaure,
 		"depart": depart,
 		"arrivee": arrivee,
 
-		"referenceTemps" : 10
+		"referenceTemps" : 10,
+		"mouvement" : 0,
+		"nouveauSpectre" : 300
 	}
 
 	metAJourBrouillard(game["brouillard"], joueur, joueur["distanceVue"])
@@ -116,11 +118,18 @@ def update(game):
 
 	if keyPressed == "p":
 		game["utiliseBrouillard"] = not game["utiliseBrouillard"]
-
-	metAJourSpectre(labyrinthe, spectre, joueur, game, minotaure)
+		
+	for sp in spectre :
+		metAJourSpectre(labyrinthe, sp, joueur, game, minotaure)
 	metAJourMinotaure(game, minotaure, joueur)
 
 	metAJourObjets(objets, game)
+	
+	game["mouvement"] += 1
+	
+	if game["mouvement"] >= game["nouveauSpectre"] :
+		game["spectre"].append(creeSpectre(labyrinthe, joueur))
+		game["mouvement"] = 0
 
 	brouillardEstPersistant = joueur["brouillardEstPersistant"]
 
@@ -156,9 +165,12 @@ def affichage(game):
 
 		afficheBordure(labyrinthe)
 		afficheLabryinthe(labyrinthe, brouillard, utiliseBrouillard)
-
-		afficheSpectre(spectre, brouillard, utiliseBrouillard)
+		
+		for sp in spectre :
+			afficheSpectre(sp, brouillard, utiliseBrouillard)
 		afficheMinotaure(minotaure, brouillard, utiliseBrouillard)
+		
+		
 
 
 		## Affiche le joueur
