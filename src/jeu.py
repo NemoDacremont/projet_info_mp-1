@@ -95,6 +95,8 @@ def update(game):
 	joueur = game["joueur"]
 	objets = game["objets"]
 
+	spectre = game["spectre"]
+
 	arrivee = game["arrivee"]
 
 
@@ -107,7 +109,7 @@ def update(game):
 
 	if keyPressed == "p":
 		game["utiliseBrouillard"] = not game["utiliseBrouillard"]
-	
+
 	metAJourSpectre(labyrinthe, spectre, joueur)
 
 	metAJourObjets(objets, labyrinthe, joueur)
@@ -145,6 +147,9 @@ def affichage(game):
 
 		afficheBordure(labyrinthe)
 		afficheLabryinthe(labyrinthe, brouillard, utiliseBrouillard)
+
+		afficheSpectre(spectre)
+
 
 		## Affiche le joueur
 		afficheJoueur(game["joueur"])
