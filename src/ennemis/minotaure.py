@@ -20,7 +20,7 @@ def creeMinotaure(labyrinthe : list) -> dict :
 	#On s'assure que le numéro de case soit pair (pour ne pas être sur un mur)
 	n *= 2
 	p *= 2
-	
+
 	minotaure = {
 		"ID" : 100,
 		"iMinotaure" : n,

@@ -5,7 +5,7 @@ from affichage import *
 from my_curses import *
 
 
-def creeCasque(labyrinthe: list, joueur: dict):
+def creeBottes(labyrinthe: list, joueur: dict):
 	"""
 		type: Fonction
 		paramètres:
@@ -16,15 +16,17 @@ def creeCasque(labyrinthe: list, joueur: dict):
 
 	i, j = selectionneCaseAleatoire(labyrinthe)
 
-	casque = {
-		"id": 50,
+	bottes = {
+		"id": 52,
 		"i": i,
 		"j": j
 	}
-	labyrinthe[i][j] = 50
+	labyrinthe[i][j] = 52
 
-	return casque
+	return bottes
 
-def utiliseCasque(joueur: dict):
-	joueur["distanceVue"] += 4
+def utiliseBottes(joueur: dict, game: dict):
+	joueur["vitesse"] += 10
+	game["referenceTemps"] += 10
+
 

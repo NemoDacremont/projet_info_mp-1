@@ -38,10 +38,10 @@ def charge(n, p):
 	joueur, depart = creeJoueur(labyrinthe)
 	iDepart = depart["i"]
 	jDepart = depart["j"]
-	
+
 	spectre = creeSpectre(labyrinthe, joueur)
 	minotaure = creeMinotaure(labyrinthe)
-	
+
 	iArrivee, jArrivee = selectionneCaseAleatoire(labyrinthe)
 
 	labyrinthe[iArrivee][jArrivee] = 5
@@ -73,7 +73,7 @@ def charge(n, p):
 		"minotaure" : minotaure,
 		"depart": depart,
 		"arrivee": arrivee,
-		
+
 		"referenceTemps" : 10
 	}
 
@@ -109,7 +109,7 @@ def update(game):
 
 	keyPressed = keypressed()
 
-	metAJourJoueur(labyrinthe, joueur, keyPressed)
+	metAJourJoueur(labyrinthe, joueur, keyPressed, game["referenceTemps"])
 
 	if keyPressed == "x":
 		game["isRunning"] = False
@@ -120,7 +120,7 @@ def update(game):
 	metAJourSpectre(labyrinthe, spectre, joueur, game, minotaure)
 	metAJourMinotaure(game, minotaure, joueur)
 
-	metAJourObjets(objets, labyrinthe, joueur)
+	metAJourObjets(objets, game)
 
 	brouillardEstPersistant = joueur["brouillardEstPersistant"]
 

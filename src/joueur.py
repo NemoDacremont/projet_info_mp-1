@@ -31,6 +31,8 @@ def creeJoueur(labyrinthe: list, distanceVue = 4):
 		"jJoueur": jJoueur,
 		"distanceVue": distanceVue,
 		"brouillardEstPersistant": False,
+		"vitesse": 10,
+		"mouvement": 0,
 		"godmode": False
 	}
 
@@ -45,7 +47,7 @@ def creeJoueur(labyrinthe: list, distanceVue = 4):
 ## 	Mise à jour
 ##
 
-def metAJourJoueur(labyrinthe, joueur, keyPressed):
+def metAJourJoueur(labyrinthe, joueur, keyPressed, referenceTemps):
 	"""
 		Type: Procédure
 		paramètre:
@@ -68,6 +70,17 @@ def metAJourJoueur(labyrinthe, joueur, keyPressed):
 	iJoueur = joueur["iJoueur"]
 	jJoueur = joueur["jJoueur"]
 	godmode = joueur["godmode"]
+
+
+	joueur["mouvement"] += joueur["vitesse"]
+
+	# Si le joueur n'avait pas assez de vitesse, il ne joue pas
+	if joueur["mouvement"] < referenceTemps:
+		return
+
+	joueur["mouvement"] = joueur["mouvement"] % referenceTemps
+
+
 
 
 	## Se déplace vers le bas

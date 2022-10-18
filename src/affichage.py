@@ -2,11 +2,18 @@
 from my_curses import *
 
 affichage = {
-	# Objets
+	## Objets
+	# bottes de sept lieux
+	52: {
+		"couleur": JAUNE,
+		"caractere": "‼"
+	},
+	# Carte
 	51: {
 		"couleur": JAUNE,
 		"caractere": "█"
 	},
+	# Casque d'observation
 	50: {
 		"couleur": JAUNE,
 		"caractere": "▲"
