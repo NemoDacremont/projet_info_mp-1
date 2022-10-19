@@ -76,7 +76,7 @@ def charge(n, p):
 
 		"referenceTemps" : 10,
 		"mouvement" : 0,
-		"vitesseSpectre" : 100
+		"vitesseSpectre" : 300
 	}
 
 	metAJourBrouillard(game["brouillard"], joueur, joueur["distanceVue"])
@@ -102,7 +102,8 @@ def update(game):
 	brouillard = game["brouillard"]
 	joueur = game["joueur"]
 	objets = game["objets"]
-
+	
+	#Mise à jour des monstres APRES le joueur
 	spectre = game["spectre"]
 	minotaure = game["minotaure"]
 
