@@ -27,48 +27,59 @@ def charge(n, p):
 		Retourne: un dictionnaire au format de jeu
 	"""
 
-	nbLignes = 2*n - 1
-	nbColonnes = 2*p - 1
-
 	no_delay(True)
 
+	## Initialise les différents objets utilisés
 	labyrinthe = genereLabyrinthe(n, p)
 	brouillard = creeBrouillard(n, p)
 
+	# Joueur ainsi que le départ et arrivée
 	joueur, depart = creeJoueur(labyrinthe)
 	iDepart = depart["i"]
 	jDepart = depart["j"]
 
-	spectre = creeSpectre(labyrinthe, joueur)
-	minotaure = creeMinotaure(labyrinthe)
-
 	iArrivee, jArrivee = selectionneCaseAleatoire(labyrinthe)
-
-	labyrinthe[iArrivee][jArrivee] = 5
-	labyrinthe[iDepart][jDepart] = 4
-
 	arrivee = {
 		"i": iArrivee,
 		"j": jArrivee
 	}
 
+	labyrinthe[iArrivee][jArrivee] = 5
+	labyrinthe[iDepart][jDepart] = 4
+
+	# Ennemis
+	spectre = creeSpectre(labyrinthe, joueur)
+	minotaure = creeMinotaure(labyrinthe)
+
+	# Objet
 	objets = creeObjets(labyrinthe, joueur)
 
+	## Correspond à la variable principale du jeu stockant toutes les informations
 	game = {
-		"brouillard": brouillard,
-		"utiliseBrouillard": True,
-
-		"labyrinthe": labyrinthe,
-		"lignes": nbLignes,
-		"colonnes": nbColonnes,
-
+		# état du jeu
 		"isRunning": True,
 		"gagne": False,
 		"perdre" : False,
 
+		"referenceTemps" : 10,
+		"compteurMouvementsJoueurs" : 0,
+		"vitesseSpectre" : 100,
+
+		"depart": depart,
+		"arrivee": arrivee,
+
+		# structures du jeu
+		"brouillard": brouillard,
+		"utiliseBrouillard": True,
+
+		"labyrinthe": labyrinthe,
+
+
+		# entités
+		"joueur": joueur,
+
 		"objets": objets,
 
-		"joueur": joueur,
 		"spectre" : spectre,
 		"minotaure" : minotaure,
 		"depart": depart,
@@ -79,8 +90,8 @@ def charge(n, p):
 		"vitesseSpectre" : 300
 	}
 
+	# On met une première fois à jour le brouillard, permet de donner la vision autour du joueur au départ
 	metAJourBrouillard(game["brouillard"], joueur, joueur["distanceVue"])
-
 
 	return game
 
@@ -98,6 +109,7 @@ def update(game):
 			Met à jour les données du jeu
 	"""
 
+	## Pour une simplification de notation, on fait des copies locales des variables
 	labyrinthe = game["labyrinthe"]
 	brouillard = game["brouillard"]
 	joueur = game["joueur"]
@@ -109,33 +121,43 @@ def update(game):
 
 	arrivee = game["arrivee"]
 
-
+	## Récupération de l'entrée
 	keyPressed = keypressed()
 
-	metAJourJoueur(labyrinthe, joueur, keyPressed, game["referenceTemps"])
-
+	## Traitement de l'entrée
+	# On traite d'abord ce qui correspond à la mise à jour du jeu
 	if keyPressed == "x":
 		game["isRunning"] = False
 
-	if keyPressed == "p":
+	elif keyPressed == "p":
 		game["utiliseBrouillard"] = not game["utiliseBrouillard"]
-		
 
+	# Joueur
+	metAJourJoueur(labyrinthe, joueur, keyPressed, game["referenceTemps"])
+
+	# ennemis
 	metAJourSpectre(labyrinthe, spectre, joueur, game, minotaure)
 	metAJourMinotaure(game, minotaure, joueur)
 
+	# Objet, c'est ici que la récupération d'objets est faite
 	metAJourObjets(objets, game)
 
-	game["mouvement"] += 1
+	## Accélération du spectre en fonction du nombre 
+	game["compteurMouvementsJoueurs"] += 1
 
-	if game["mouvement"] >= game["nouveauSpectre"] :
-		game["spectre"].append(creeSpectre(labyrinthe, joueur))
-		game["mouvement"] = 0
+	if game["compteurMouvementsJoueurs"] >= game["vitesseSpectre"] :
 
+		game["spectre"]["vitesse"] += 1
+		game["compteurMouvementsJoueurs"] %= game["vitesseSpectre"]
+
+
+	## Finalement, on met le brouillard à jour
+	# valeur stockée dans joueur car est dépendante de la possession de l'objet "Carte"
 	brouillardEstPersistant = joueur["brouillardEstPersistant"]
 
 	metAJourBrouillard(brouillard, joueur, joueur["distanceVue"], brouillardEstPersistant)
 
+	# et on teste si le joueur à gagné ou non, ie il se trouve sur la case d'arrivée
 	if joueur["iJoueur"] == arrivee["i"] and joueur["jJoueur"] == arrivee["j"]:
 		game["gagne"] = True
 
@@ -153,35 +175,37 @@ def affichage(game):
 			Met à jour l'affichage du jeu
 
 	"""
+	# on efface l'affichage précédent
 	clear()
 
-	if not game["gagne"] and not game["perdre"]:
-		# copie des variables pour alléger les notations
-		brouillard = game["brouillard"]
-		labyrinthe = game["labyrinthe"]
-		utiliseBrouillard  = game["utiliseBrouillard"]
-		objets = game["objets"]
-		spectre = game["spectre"]
-		minotaure = game["minotaure"]
+	# copie des variables pour alléger les notations
+	brouillard = game["brouillard"]
+	labyrinthe = game["labyrinthe"]
+	utiliseBrouillard  = game["utiliseBrouillard"]
+	objets = game["objets"]
+	spectre = game["spectre"]
+	minotaure = game["minotaure"]
 
+
+
+	if game["perdre"] :
+		print_str("You loose.")
+
+	elif game["gagne"]:
+		print_str("You win.")
+
+	else:
+		# affiche le labyrinthe
 		afficheBordure(labyrinthe)
 		afficheLabryinthe(labyrinthe, brouillard, utiliseBrouillard)
 
-		for sp in spectre :
-			afficheSpectre(sp, brouillard, utiliseBrouillard)
-		afficheMinotaure(minotaure, brouillard, utiliseBrouillard)
-
-
-
-
 		## Affiche le joueur
 		afficheJoueur(game["joueur"])
-	
-	elif game["perdre"] :
-		print_str("You loose.")
-		
-	else:
-		print_str("You win.")
+
+		## Affiche les ennemis
+		afficheSpectre(spectre, brouillard, utiliseBrouillard)
+		afficheMinotaure(minotaure, brouillard, utiliseBrouillard)
+
 
 ##
 ## Procédure Run
@@ -192,7 +216,7 @@ def run():
 		Type: Procedure
 
 		Résumé:
-			Lance réellement le jeu
+			Lance réellement le jeu, procédure contenant la boucle principale du programme
 	"""
 
 	game = charge(16, 75)

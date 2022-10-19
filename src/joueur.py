@@ -19,7 +19,6 @@ def creeJoueur(labyrinthe: list, distanceVue = 4):
 			- n: entier, correspond au nombre de lignes contenant des chemins avant la destruction de murs
 			- p: entier, correspond au nombre de colonnes contenant des chemins avant la destruction de murs
 
-
 		Return:
 			Un dictionnaire du format d'un joueur
 	"""
@@ -59,11 +58,9 @@ def metAJourJoueur(labyrinthe, joueur, keyPressed, referenceTemps):
 			Met à jour le joueur:
 				- Met à jour les déplacements du joueur
 
-				TO-DO:
-					Ramassage d'objets
-
 	"""
-	## Pour une simplification de notation
+
+	## Pour une simplification de notation, on fait des copies locales des variables
 	nbLignes = len(labyrinthe)
 	nbColonnes = len(labyrinthe[0])
 
@@ -72,6 +69,7 @@ def metAJourJoueur(labyrinthe, joueur, keyPressed, referenceTemps):
 	godmode = joueur["godmode"]
 
 
+	# On calcule la quantité de mouvement permettant de déterminer si il peut se déplacer
 	joueur["mouvement"] += joueur["vitesse"]
 
 	# Si le joueur n'avait pas assez de vitesse, il ne joue pas
@@ -81,31 +79,40 @@ def metAJourJoueur(labyrinthe, joueur, keyPressed, referenceTemps):
 	joueur["mouvement"] = joueur["mouvement"] % referenceTemps
 
 
+	## Gestion des entrées utilisateurs
 
+	# Dictionnaire permettant de facilement gérer les touches
+	controles = {
+		"droite": ["d", "D", "KEY_RIGHT"],
+		"gauche": ["q", "Q", "KEY_LEFT"],
+		"haut": ["z", "Z", "KEY_UP"],
+		"bas": ["s", "S", "KEY_DOWN"],
+		"godMode": ["g", "G"]
+	}
 
 	## Se déplace vers le bas
-	if keyPressed == "s" or keyPressed == "KEY_DOWN":
+	if keyPressed in controles["bas"]:
 		if iJoueur + 1 < nbLignes and (labyrinthe[iJoueur + 1][jJoueur] >= 0 or godmode):
 			joueur["iJoueur"] += 1
 
 	## Se déplace vers le haut
-	elif keyPressed == "z" or keyPressed == "KEY_UP":
+	elif keyPressed in controles["haut"]:
 		if iJoueur - 1 >= 0 and (labyrinthe[iJoueur - 1][jJoueur] >= 0 or godmode):
 			joueur["iJoueur"] -= 1
 
 	## Se déplace vers la gauche
-	elif keyPressed == "q" or keyPressed == "KEY_LEFT":
+	elif keyPressed in controles["gauche"]:
 		if jJoueur - 1 >= 0 and (labyrinthe[iJoueur][jJoueur - 1] >= 0 or godmode):
 			joueur["jJoueur"] -= 1
 
 	## Se déplace vers la droite
-	elif keyPressed == "d" or (keyPressed == "KEY_RIGHT" or godmode):
+	elif keyPressed in controles["droite"]:
 		if jJoueur + 1 < nbColonnes and (labyrinthe[iJoueur][jJoueur + 1] >= 0 or godmode):
 			joueur["jJoueur"] += 1
 
 
-	## Godmod
-	if keyPressed == "g":
+	## Godmode, permet de passer à travers les murs
+	if keyPressed in controles["godMode"]:
 		joueur["godmode"] = not godmode
 
 
@@ -122,7 +129,7 @@ def afficheJoueur(joueur):
 	couleur = affichage["joueur"]["couleur"]
 	caractere = affichage["joueur"]["caractere"]
 
-	# On doit faire un déccalage de 1 à cause de l'affichage de la bordure
+	# On doit faire un décalage de 1 à cause de l'affichage de la bordure
 	i = joueur["iJoueur"] + 1
 	j = joueur["jJoueur"] + 1
 

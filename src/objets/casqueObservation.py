@@ -26,5 +26,5 @@ def creeCasque(labyrinthe: list, joueur: dict):
 	return casque
 
 def utiliseCasque(joueur: dict):
-	joueur["distanceVue"] += 4
+	joueur["distanceVue"] += 2
 

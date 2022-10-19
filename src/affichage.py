@@ -1,6 +1,8 @@
 
 from my_curses import *
 
+# Dictionnaire permettant de coder la façon dont on affiche les objets
+# Les clés entières permettent notamment d'encoder les cases du labyrinthe
 affichage = {
 	## Objets
 	# bottes de sept lieux
