@@ -28,7 +28,7 @@ def creeMinotaure(labyrinthe : list) -> dict :
 		"mouvement" : 1,
 		"vitesse" : 1
 		}
-	
+
 	return minotaure
 
 def traquerLeJoueur(minotaure : dict, joueur : dict) -> None :
@@ -63,18 +63,18 @@ def metAJourMinotaure(jeu : dict, minotaure : dict, joueur : dict) :
 	#On test si on est sur le joueur
 	if minotaure["iMinotaure"] == joueur["iJoueur"] and minotaure["jMinotaure"] == joueur["jJoueur"] :
 		jeu["perdre"] = True
-	
+
 	elif mouvement >= temps :
 		traquerLeJoueur(minotaure, joueur)
 		minotaure["mouvement"] %= temps
-	
-	minotaure["mouvement"] += 1
-	
+
+	minotaure["mouvement"] += minotaure["vitesse"]
+
 def afficheMinotaure(minotaure : dict, brouillard, utiliseBrouillard) -> None:
-	
+
 	iMinotaure = minotaure["iMinotaure"]
 	jMinotaure = minotaure["jMinotaure"]
-	
+
 	if not utiliseBrouillard or brouillard[iMinotaure][jMinotaure] :
 		couleur = affichage["minotaure"]["couleur"]
 		caractere = affichage["minotaure"]["caractere"]

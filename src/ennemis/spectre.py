@@ -39,7 +39,7 @@ def creeSpectre(labyrinthe : list, joueur : dict) -> dict :
 		"jSpectre" : jSpectre,
 		"chemin" : chemin,
 		"mouvement" : 0,
-		"vitesse" : 3}
+		"vitesse" : 5}
 
 	return Spectre
 
@@ -93,13 +93,13 @@ def metAJourSpectre(labyrinthe : list, Spectre : dict, Joueur : dict, jeu : dict
 	
 	#Enfin, on met à jour la variable de mouvement
 	Spectre["mouvement"] += Spectre["vitesse"]
-	
+
 
 def afficheSpectre(spectre : dict, brouillard, utiliseBrouillard) -> None:
-	
+
 	iSpectre = spectre["iSpectre"]
 	jSpectre = spectre["jSpectre"]
-	
+
 	if not utiliseBrouillard or brouillard[iSpectre][jSpectre] :
 		couleur = affichage["spectre"]["couleur"]
 		caractere = affichage["spectre"]["caractere"]
