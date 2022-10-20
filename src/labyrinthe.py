@@ -23,7 +23,7 @@ def saveLabInFile(labyrinthe, n: int, p: int, fileName: str, mode = "a"):
 
 		text += f"{line}\n"
 
-	with open(fileName, "a") as file:
+	with open(fileName, mode) as file:
 		file.write(text)
 		file.write("----------------------------------------------\n")
 
@@ -105,6 +105,7 @@ def genereCase(i: int, j: int, n: int, p: int) -> int:
 		return -4
 
 	# Mur
+	# Est un mur si de parité différente
 	if i%2 == (j+1)%2:
 		return -1
 
@@ -112,7 +113,7 @@ def genereCase(i: int, j: int, n: int, p: int) -> int:
 	if i%2==0 and j%2==0:
 		return i*p + j
 
-	# Même si ça ne devrait jamais arriver, on renvoie une valeur par défaut
+	# Même si ça ne devrait jamais arriver, on renvoie une valeur par défaut, correspond à une erreur
 	return -99
 
 
@@ -217,7 +218,7 @@ def formatteIntersection(labyrinthe, i, j):
 
 	### On compile le tout
 
-	## 4 liaison
+	## 4 liaison, une intersection de base
 	if vertical_bas and vertical_haut and horizontal_droite and horizontal_gauche:
 		labyrinthe[i][j] = -4
 
