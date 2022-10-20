@@ -31,7 +31,7 @@ def creeJoueur(labyrinthe: list, distanceVue = 4):
 		"distanceVue": distanceVue,
 		"brouillardEstPersistant": False,
 		"vitesse": 10,
-		"mouvement": 0,
+		"mouvement": 10,
 		"godmode": False
 	}
 
@@ -46,13 +46,14 @@ def creeJoueur(labyrinthe: list, distanceVue = 4):
 ## 	Mise à jour
 ##
 
-def metAJourJoueur(labyrinthe, joueur, keyPressed, referenceTemps):
+def metAJourJoueur(labyrinthe, joueur, referenceTemps, keyPressed):
 	"""
 		Type: Procédure
 		paramètre:
 			- labyrinthe: labyrinthe
 			- joueur: joueur
 			- keyPressed: valeur renvoyée par keypressed()
+			- referenceTemps : la référence actuelle des temps pour gérer le nombre d'actions
 
 		Résumé:
 			Met à jour le joueur:
@@ -70,13 +71,13 @@ def metAJourJoueur(labyrinthe, joueur, keyPressed, referenceTemps):
 
 
 	# On calcule la quantité de mouvement permettant de déterminer si il peut se déplacer
-	joueur["mouvement"] += joueur["vitesse"]
+	#joueur["mouvement"] += joueur["vitesse"]
 
 	# Si le joueur n'avait pas assez de vitesse, il ne joue pas
 	if joueur["mouvement"] < referenceTemps:
 		return
 
-	joueur["mouvement"] = joueur["mouvement"] % referenceTemps
+	joueur["mouvement"] -= referenceTemps
 
 
 	## Gestion des entrées utilisateurs

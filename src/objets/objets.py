@@ -44,7 +44,7 @@ def utiliseObjet(objet: dict, game: dict):
 	elif objet["id"] == 51:
 		utiliseCarte(joueur)
 	elif objet["id"] == 52:
-		utiliseBottes(joueur, game)
+		utiliseBottes(joueur)
 
 	#labyrinthe[i][j] = 0
 

@@ -63,7 +63,7 @@ def charge(n, p):
 
 		"referenceTemps" : 10,
 		"compteurMouvementsJoueurs" : 0,
-		"vitesseSpectre" : 100,
+		"accelerationSpectre" : 10,
 
 		"depart": depart,
 		"arrivee": arrivee,
@@ -85,9 +85,8 @@ def charge(n, p):
 		"depart": depart,
 		"arrivee": arrivee,
 
-		"referenceTemps" : 10,
-		"mouvement" : 0,
-		"vitesseSpectre" : 300
+		"referenceTemps" : max(joueur["vitesse"], spectre["vitesse"], minotaure["vitesse"]),
+
 	}
 
 	# On met une première fois à jour le brouillard, permet de donner la vision autour du joueur au départ
@@ -114,28 +113,32 @@ def update(game):
 	brouillard = game["brouillard"]
 	joueur = game["joueur"]
 	objets = game["objets"]
-	
-	#Mise à jour des monstres APRES le joueur
 	spectre = game["spectre"]
 	minotaure = game["minotaure"]
-
 	arrivee = game["arrivee"]
+	
+	## Mise à jour de la référence des temps
+	game["referenceTemps"] = max(joueur["vitesse"], spectre["vitesse"], minotaure["vitesse"])
 
-	## Récupération de l'entrée
-	keyPressed = keypressed()
+	## Récupération de l'entrée (avec une valeur défaut lorsque le joueur ne joue pas)
+	if joueur["mouvement"] >= game["referenceTemps"] :
+		keyPressed = keypressed()
 
-	## Traitement de l'entrée
+	## Traitement de l'entrée (si le joueur a la vitesse pour jouer)
 	# On traite d'abord ce qui correspond à la mise à jour du jeu
-	if keyPressed == "x":
-		game["isRunning"] = False
+		if keyPressed == "x":
+			game["isRunning"] = False
 
-	elif keyPressed == "p":
-		game["utiliseBrouillard"] = not game["utiliseBrouillard"]
+		elif keyPressed == "p":
+			game["utiliseBrouillard"] = not game["utiliseBrouillard"]
+		
+		
+		metAJourJoueur(labyrinthe, joueur, game["referenceTemps"], keyPressed)
 
 	# Joueur
-	metAJourJoueur(labyrinthe, joueur, keyPressed, game["referenceTemps"])
+	joueur["mouvement"] += joueur["vitesse"]
 
-	# ennemis
+	# Mise à jour des ennemis APRES le joueur
 	metAJourSpectre(labyrinthe, spectre, joueur, game, minotaure)
 	metAJourMinotaure(game, minotaure, joueur)
 
@@ -145,10 +148,10 @@ def update(game):
 	## Accélération du spectre en fonction du nombre 
 	game["compteurMouvementsJoueurs"] += 1
 
-	if game["compteurMouvementsJoueurs"] >= game["vitesseSpectre"] :
+	if game["compteurMouvementsJoueurs"] >= game["accelerationSpectre"] :
 
 		game["spectre"]["vitesse"] += 1
-		game["compteurMouvementsJoueurs"] %= game["vitesseSpectre"]
+		game["compteurMouvementsJoueurs"] %= game["accelerationSpectre"]
 
 
 	## Finalement, on met le brouillard à jour
@@ -162,7 +165,7 @@ def update(game):
 		game["gagne"] = True
 
 ###
-### Procedure draw
+### Procedure affichage
 ###
 
 def affichage(game):

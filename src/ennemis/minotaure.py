@@ -58,17 +58,21 @@ def traquerLeJoueur(minotaure : dict, joueur : dict) -> None :
 
 
 def metAJourMinotaure(jeu : dict, minotaure : dict, joueur : dict) :
-	mouvement = minotaure["mouvement"]
+	
 	temps = jeu["referenceTemps"]
+	
+	#On met à jour la quantité de mouvement du minotaure
+	minotaure["mouvement"] += minotaure["vitesse"]
+	
 	#On test si on est sur le joueur
 	if minotaure["iMinotaure"] == joueur["iJoueur"] and minotaure["jMinotaure"] == joueur["jJoueur"] :
 		jeu["perdre"] = True
 
-	elif mouvement >= temps :
+	elif minotaure["mouvement"] >= temps :
 		traquerLeJoueur(minotaure, joueur)
-		minotaure["mouvement"] %= temps
+		minotaure["mouvement"] -= temps
 
-	minotaure["mouvement"] += minotaure["vitesse"]
+
 
 def afficheMinotaure(minotaure : dict, brouillard, utiliseBrouillard) -> None:
 

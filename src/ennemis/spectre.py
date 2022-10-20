@@ -183,6 +183,10 @@ def metAJourSpectre(labyrinthe : list, Spectre : dict, Joueur : dict, jeu : dict
 	chemin = Spectre["chemin"]
 	temps = jeu["referenceTemps"]
 	
+	#On met à jour la quatité de mouvement du spectre
+	
+	Spectre["mouvement"] += Spectre["vitesse"]
+	
 	#On vérifie que le joueur n'est pas à-côté du Spectre
 	if len(chemin) > 1 :
 		
@@ -190,17 +194,18 @@ def metAJourSpectre(labyrinthe : list, Spectre : dict, Joueur : dict, jeu : dict
 		if (iJoueur, jJoueur) == chemin[1] :
 			Spectre["chemin"] = chemin[1 :]
 			
-		#Sinon le chemin devient plus long et on test également si le joueur reste sur place
+		#Sinon le chemin devient plus long (sauf si le joueur reste sur place)
 		elif (iJoueur, jJoueur) != chemin[0] :
 			Spectre["chemin"] = [(iJoueur, jJoueur)] + chemin
 			
-		#Ensuite, le sepctre avance vers le joueur (s'il a le droit de bouger)
+		#Ensuite, le spectre avance vers le joueur (s'il a le droit de bouger)
 		if Spectre["mouvement"] >= temps :
-			Spectre["mouvement"] = Spectre["mouvement"] % temps
+			Spectre["mouvement"] -= temps
 			Spectre["iSpectre"] = chemin[-1][0]
 			Spectre["jSpectre"] = chemin[-1][1]
 			Spectre["chemin"].pop()
-		
+
+	
 	#Dans le cas contraire, le Spectre touche le Joueur, qui est téléporté plus loin
 	else :
 		Spectre["iSpectre"] = Joueur["iJoueur"]
@@ -208,8 +213,7 @@ def metAJourSpectre(labyrinthe : list, Spectre : dict, Joueur : dict, jeu : dict
 		teleportation(labyrinthe, Spectre, Joueur)
 		minotaure["vitesse"] += 1
 	
-	#Enfin, on met à jour la variable de mouvement
-	Spectre["mouvement"] += Spectre["vitesse"]
+
 
 
 def afficheSpectre(spectre : dict, brouillard : list, utiliseBrouillard : bool) -> None:

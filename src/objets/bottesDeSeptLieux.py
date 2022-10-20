@@ -25,8 +25,7 @@ def creeBottes(labyrinthe: list, joueur: dict):
 
 	return bottes
 
-def utiliseBottes(joueur: dict, game: dict):
+def utiliseBottes(joueur: dict):
 	joueur["vitesse"] += 10
-	game["referenceTemps"] += 10
 
 
