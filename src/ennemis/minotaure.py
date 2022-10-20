@@ -15,6 +15,17 @@ Chaque fois que le Spectre (cf spectre.py) touche le joueur, le Minotaure accél
 """
 
 def creeMinotaure(labyrinthe : list) -> dict :
+	
+	"""
+	Paramètres
+	----------
+		labyrinthe : matrice du labyrinthe
+	
+	Return
+	------
+		dictionnaire contenant toutes les informations du Minotaure
+		
+	"""
 	#Dimensions du demi-labyrinthe (nombres de cases sans les murs)
 	n, p = len(labyrinthe) // 4, len(labyrinthe[0]) // 4
 	#On s'assure que le numéro de case soit pair (pour ne pas être sur un mur)
@@ -32,6 +43,17 @@ def creeMinotaure(labyrinthe : list) -> dict :
 	return minotaure
 
 def traquerLeJoueur(minotaure : dict, joueur : dict) -> None :
+	"""
+	
+	Paramètres
+	----------
+		minotaure : dictionnaire contenant toutes les informations du minotaure
+		joueur : dictionnaire contenant toutes les informations du joueur
+	
+	Procédure qui permet de déplacer le Minotaure de façon à toujours le rapprocher du joueur.
+	Le Minotaure se déplace en ignorant les murs : en conséquence il calcule juste le chemin le plus direct, "à vol d'oiseau"
+
+	"""
 	
 	iJoueur = joueur["iJoueur"]
 	jJoueur = joueur["jJoueur"]
@@ -57,7 +79,17 @@ def traquerLeJoueur(minotaure : dict, joueur : dict) -> None :
 			minotaure["jMinotaure"] += 1
 
 
-def metAJourMinotaure(jeu : dict, minotaure : dict, joueur : dict) :
+def metAJourMinotaure(jeu : dict, minotaure : dict, joueur : dict) -> None :
+	
+	"""
+	Paramètres
+	----------
+		jeu : dictionnaire contenant tous les paramètres du jeu
+		minotaure : dictionnaire contenant toutes les informations du minotaure
+		joueur : dictionnaire contenant toutes les informations du joueur
+		
+	Procédure de mise à jour du Minotaure.
+	"""
 	
 	temps = jeu["referenceTemps"]
 	
@@ -74,7 +106,17 @@ def metAJourMinotaure(jeu : dict, minotaure : dict, joueur : dict) :
 
 
 
-def afficheMinotaure(minotaure : dict, brouillard, utiliseBrouillard) -> None:
+def afficheMinotaure(minotaure : dict, brouillard : list, utiliseBrouillard : bool) -> None :
+	
+	"""
+	Paramètres
+	----------
+		mintoaure : dictionnaire contenant toutes les informations du minotaure
+		brouillard : matrice de 0 et de 1 marquant le brouillard sur le labyrinthe
+		utiliseBrouillard : vaut True si le brouillard est actif
+	
+	Procédure d'affichage du minotaure
+	"""
 
 	iMinotaure = minotaure["iMinotaure"]
 	jMinotaure = minotaure["jMinotaure"]

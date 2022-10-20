@@ -63,7 +63,7 @@ def charge(n, p):
 
 		"referenceTemps" : 10,
 		"compteurMouvementsJoueurs" : 0,
-		"accelerationSpectre" : 10,
+		"accelerationSpectre" : 200,
 
 		"depart": depart,
 		"arrivee": arrivee,
@@ -192,7 +192,7 @@ def affichage(game):
 
 
 	if game["perdre"] :
-		print_str("You loose.")
+		print_str("You lose")
 
 	elif game["gagne"]:
 		print_str("You win.")
