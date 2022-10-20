@@ -113,6 +113,8 @@ def update(game):
 	brouillard = game["brouillard"]
 	joueur = game["joueur"]
 	objets = game["objets"]
+
+	#Mise à jour des monstres APRES le joueur
 	spectre = game["spectre"]
 	minotaure = game["minotaure"]
 	arrivee = game["arrivee"]
